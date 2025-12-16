@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Expense Tracker</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.container {
+    background: #fff;
+    padding: 20px;
+    width: 320px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.1);
+}
+h2 { text-align: center; }
+input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+}
+button {
+    width: 100%;
+    padding: 8px;
+    background: #4CAF50;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+button:hover { background: #45a049; }
+ul { list-style: none; padding: 0; }
+li {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+.total {
+    font-weight: bold;
+    margin-top: 10px;
+}
+.delete {
+    color: red;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Expense Tracker</h2>
+
+    <input type="text" id="name" placeholder="Expense name">
+    <input type="number" id="amount" placeholder="Amount">
+    <button onclick="addExpense()">Add Expense</button>
+
+    <ul id="list"></ul>
+
+    <div class="total">Total: ₱<span id="total">0</span></div>
+</div>
+
+<script>
+let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+
+function render() {
+    const list = document.getElementById("list");
+    const total = document.getElementById("total");
+    list.innerHTML = "";
+    let sum = 0;
+
+    expenses.forEach((e, i) => {
+        sum += e.amount;
+        list.innerHTML += `
+            <li>
+                ${e.name} - ₱${e.amount}
+                <span class="delete" onclick="removeExpense(${i})">✖</span>
+            </li>
+        `;
+    });
+
+    total.textContent = sum;
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+}
+
+function addExpense() {
+    const name = document.getElementById("name").value;
+    const amount = Number(document.getElementById("amount").value);
+
+    if (!name || !amount) return alert("Fill all fields");
+
+    expenses.push({ name, amount });
+    document.getElementById("name").value = "";
+    document.getElementById("amount").value = "";
+    render();
+}
+
+function removeExpense(index) {
+    expenses.splice(index, 1);
+    render();
+}
+
+render();
+</script>
+
+</body>
+</html>
